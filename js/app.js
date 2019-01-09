@@ -7,7 +7,9 @@ function initialize(){ARSynth.init({noteElm: $('#note')[0], frequencyElm: $('#fr
 
 /* Hier die Farbe zum Tracken eintragen, wenn ihr sie Fix machen wollt */
 
-ARSynth.set('color', "#780011"); //
+ARSynth.set('color', "#780011"); // Farbe
+ARSynth.set('cOffset', 20); // Color Offset
+
 
 /* Euer Code */
 
