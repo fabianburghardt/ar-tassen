@@ -1,8 +1,0 @@
-{
-  "name": "AR-Synth.js",
-  "description": "Only to install connect",
-  "author": "Gilberto Avalos <avalosagnostic@gmail.com>",
-  "dependencies": {
-    "connect": "latest"
-  }
-}
