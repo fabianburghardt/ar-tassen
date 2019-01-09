@@ -162,7 +162,7 @@
     numSamples        = bufferLeft.length,
     synthOutputBuffer = [];
 
-    if(playing) {
+    if(farbe1) {
       synthOutputBuffer = theremin.getBuffer( numSamples );
       for(var i = 0; i < synthOutputBuffer.length; i++) {
         bufferLeft[i] = synthOutputBuffer[i];
@@ -323,7 +323,7 @@
 
       // We didn't find any shape
       if (!shape1){
-        playing = false;
+        farbe1 = false;
         return;
       }
       if(shape1.weight > sizeOffset) {
@@ -334,12 +334,12 @@
         this.twElement.style.top = shape1.y + 'px';
         this.twElement.style.left = shape1.x + 'px';
         this.twElement.style.backgroundColor = 'rgb('+shape1.rgb+')';
-        playing = true;
+        farbe1 = true;
         theremin.setPitchBend( shape1.x / this.width );
         theremin.volume = 1 - shape1.y / this.height;
         updateDisplay();
       } else {
-        playing = false;
+        farbe1 = false;
       }
       return;
     }

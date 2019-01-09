@@ -17,9 +17,6 @@ function initialize(){
   });
 }
 
-
-
-
 var synth = new Tone.Synth().toMaster();
 
 // //play a middle 'C' for the duration of an 8th note
@@ -27,12 +24,27 @@ var synth = new Tone.Synth().toMaster();
 
 
 
+
+
 /* Euer Code */
 
 function checkIfColorVisible(){
 
-  $("#debugger").text("farbe sichtbar: " + playing);
+  // Hier wird der Text auf den Screen geschrieben, ob sichtbar oder nicht
+  $("#debugger").text("farbe sichtbar: " + farbe1);
 
+
+  // Hier schauen wir if-else mäßig, ob Farbe1 sichtbar ist oder nicht
+  if(farbe1 == true){
+    // Ist sichtbar
+    fadeInSound1();
+  }else{
+    // Ist nicht sichtbar
+    fadeOutSound1();
+  }
+
+
+  // Die Check Funktion ruft sich hier alle 100ms wieder selber auf
   setTimeout(function(){
     checkIfColorVisible();
   },100)
@@ -40,3 +52,47 @@ function checkIfColorVisible(){
 }
 
 checkIfColorVisible();
+
+
+
+
+function fadeInSound1(){
+
+}
+function fadeOutSound1(){
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
