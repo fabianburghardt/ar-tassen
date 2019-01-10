@@ -39,6 +39,13 @@ function checkIfColorVisible(){
     fadeOutSound1(); // Ist nicht sichtbar
   }
 
+  // Hier schauen wir if-else mäßig, ob Farbe2 sichtbar ist oder nicht
+  if(farbe1 == true){
+    fadeInSound2(); // Ist sichtbar
+  }else{
+    fadeOutSound2(); // Ist nicht sichtbar
+  }
+
 
   // Die Check Funktion ruft sich hier alle 100ms wieder selber auf
   setTimeout(function(){
@@ -55,6 +62,13 @@ function fadeInSound1(){
 
 }
 function fadeOutSound1(){
+
+}
+
+function fadeInSound2(){
+
+}
+function fadeOutSound2(){
 
 }
 
