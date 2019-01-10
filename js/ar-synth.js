@@ -17,7 +17,8 @@
     CONFIG = {
 
       // RGB Color to detect
-      color: '#780011',
+      color: '#000000',
+      color2: '#000000',
 
       // Webcam element to capture
       webcamElm: document.getElementById('webcam'),
@@ -107,7 +108,7 @@
       var currentNote = frequencyToNote(theremin.frequency);
       CONFIG.noteElm.innerHTML = currentNote;
       //console.log("Note: " + currentNote + "  |  Frequenz: " + theremin.frequency);
-      synth.triggerAttackRelease(currentNote, "10n");
+      // synth.triggerAttackRelease(currentNote, "10n");
     }
   }
 
@@ -345,11 +346,154 @@
     }
   };
 
+  var processor2 = {
+    doLoad: function() {
+      var self            = this;
+      this.video          = CONFIG.webcamElm;
+      this.mirrorVideo    = CONFIG.webcamMirror;
+      this.mirrorVideoCtx = this.mirrorVideo.getContext('2d');
+      this.twElement      = CONFIG.trackedElm;
+      this.pageLoaded     = true;
+      this.startPlayer();
+    },
+    videoIsPlaying: function() {
+      this.timerCallback();
+    },
+    videoIsReady: function() {
+      this.videoLoaded = true;
+      this.startPlayer();
+    },
+    startPlayer: function() {
+      if (!this.videoLoaded || !this.pageLoaded) return;
+      this.width                      = this.video.width;
+      this.height                     = this.video.height;
+      this.mirrorVideo.width          = this.width;
+      this.mirrorVideo.height         =  this.height;
+      this.mirrorVideoCtx.fillStyle   = 'white';
+      this.mirrorVideoCtx.strokeStyle = 'black';
+
+      this.mirrorVideoCtx.translate(this.mirrorVideo.width, 0);
+      this.mirrorVideoCtx.scale(-1, 1);
+      this.playVideo();
+    },
+    // Videos control
+    playVideo: function() {
+      this.video.play();
+      this.videoIsPlaying();
+    },
+    stopVideo: function() {
+      this.video.pause();
+      clearTimeout(this.timeout);
+    },
+    // Main loop
+    timerCallback: function() {
+      if (this.video.paused || this.video.ended) {
+        return;
+      }
+      this.computeFrame();
+      var self = this;
+      this.timeout = setTimeout(function () {
+        self.timerCallback();
+      }, 50);
+    },
+    dist: function(x1, y1, x2, y2) {
+      return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    },
+    computeFrame: function() {
+      var RGB = hexToRgb(CONFIG.color2);
+      var cR  = RGB.r,
+      cG      = RGB.g,
+      cB      = RGB.b;
+
+      var sizeOffset = CONFIG.sizeOffset;
+      var cOffset    = CONFIG.cOffset;
+
+      this.mirrorVideoCtx.clearRect(0, 0, this.width, this.height);
+      try {
+        this.mirrorVideoCtx.drawImage(this.video, 0, 0, this.width, this.height);
+      } catch(e) {
+        return;
+      }
+      var frame = this.mirrorVideoCtx.getImageData(0, 0, this.width, this.height);
+
+      var x, y;
+
+      var shape1 = null;
+
+      var r, g, b, x, y;
+
+      var D = 20;
+
+      var l = frame.data.length / 4;
+
+      // We dont' need to compute each pixels
+      var step = 4;
+
+      for (var i = 0; i < l; i += step) {
+
+        r = frame.data[i * 4 + 0];
+        g = frame.data[i * 4 + 1];
+        b = frame.data[i * 4 + 2];
+
+
+        x = i % this.width;
+        y = Math.round(i / this.width);
+
+          // Is the pixel in our color range?
+          if ((r > (cR - cOffset) && r < (cR + cOffset) ) && (g > (cG - cOffset) && g < (cG + cOffset) ) && (b > (cB - cOffset) && b < (cB + cOffset) )) {
+            if (!shape1) {
+                  // no shape yet
+                  shape1 = {};
+                  shape1.x = x;
+                  shape1.y = y;
+                  shape1.rgb = r + ',' + g + ',' + b;
+                  shape1.weight = 1;
+                } else {
+                  var d = this.dist(x, y, shape1.x, shape1.y);
+                  if (d < D) {
+                    shape1.x += 1/(shape1.weight + 1) * (x - shape1.x);
+                    shape1.y += 1/(shape1.weight + 1) * (y - shape1.y);
+                    shape1.rgb = r + ',' + g + ',' + b;
+                    shape1.weight++;
+                  }
+                }
+              }
+          // Too shaking
+          //if (x >= (this.width - step)) i+= step * this.width;
+        }
+
+      // We didn't find any shape
+      if (!shape1){
+        farbe2 = false;
+        return;
+      }
+      if(shape1.weight > sizeOffset) {
+        // console.log('Color detectado', shape1);
+        // this.twElement.style.top = shape1.y;
+        // this.twElement.style.left = shape1.x;
+
+        this.twElement.style.top = shape1.y + 'px';
+        this.twElement.style.left = shape1.x + 'px';
+        this.twElement.style.backgroundColor = 'rgb('+shape1.rgb+')';
+        farbe2 = true;
+        theremin.setPitchBend( shape1.x / this.width );
+        theremin.volume = 1 - shape1.y / this.height;
+        updateDisplay();
+      } else {
+        farbe2 = false;
+      }
+      return;
+    }
+  };
+
   var ARSynth = {
     init: function(config){
       extend(CONFIG,  config);
       processor.doLoad();
       processor.videoIsReady();
+
+      processor2.doLoad();
+      processor2.videoIsReady();
     },
     set: function(option, value){
       CONFIG[option] = value;

@@ -13,6 +13,7 @@
 
     <script type="text/javascript">
       var farbe1 = false;
+      var farbe2 = false;
     </script>
 
     <script type="text/javascript" src="js/Tone.min.js"/></script>
@@ -24,6 +25,7 @@
   <body>
   
     <h1 id="debugger">a</h1>
+    <h1 id="debugger2">a</h1>
 
     <video id="webcam" autoplay width="800" height="600" oncanplay="initialize()"></video>
     <canvas id="webcamMirror"></canvas>
@@ -34,16 +36,16 @@
         <h2 id="frequency">0 Hz</h2>
         <div id="configuration">
           <div class="control">
-            <strong>Pick a color to track</strong>
-            <input id="color" type="color" value="#780011"/>
+            <strong>Farbe 1</strong>
+            <input id="color" type="color" value="#000000"/>
+          </div>
+          <div class="control">
+            <strong>Farbe 2</strong>
+            <input id="color2" type="color" value="#000000"/>
           </div>
           <div class="control">
             <strong>Color offset/range</strong>
             <input id="color-offset" type="number" max="100" min="10" value="20"/>
-          </div>
-          <div class="control">
-            <strong>Size offset</strong>
-            <input id="size-offset" type="number" max="100" min="10" value="5"/>
           </div>
         </div>
       </div>
